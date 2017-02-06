@@ -1,0 +1,24 @@
+ALGORITMO GENERAR TABLERO
+INICIO
+	VAR html = <TABLE>
+	
+	PARA i=0; i<filas; i++
+	INICIO
+		html = html + <TR>
+		
+		PARA j=0; j<columnas; j++
+		INICIO
+			html += <TD id="celda_i_j" class="vacio" onclick="disparo(celda_i_j)"> </TD>
+		FIN
+		
+		html = html + </TR>
+	FIN
+	
+	
+	html = html + </TABLE> 
+	
+	ESCRIBE_HTML("caja_partida",html);
+	
+	// $("#partida").html(html);
+	// document.getElementById("partida").innerHTML = html;
+FIN
