@@ -10,6 +10,8 @@ var tablero = null;
 var filas = 8;
 var columnas = 8;
 
+var segundos;
+var myTimer;
 
 /**
  * Esta función responde al evento "ready" y carga la 
@@ -186,7 +188,7 @@ function generarTablero(){
     for (var i=0; i<filas;i++){
         html+='<tr>';
         for (var j=0; j<columnas;j++){
-            html+='<td id="celda_'+i+'_'+j+'" class="vacio" onclick=disparo("celda_'+i+'_'+j+'") > </td>';
+            html+='<td id="celda_'+i+'_'+j+'" class="vacio"+ onclick=disparo("celda_'+i+'_'+j+'",'+i+','+j+') > </td>';
             
         }
         html+='</tr>';
@@ -194,6 +196,22 @@ function generarTablero(){
     
     html+='</table>';
     document.getElementById("partida").innerHTML=html;
+}
+
+function generarTablerojQ(){
+    $("#partida").empty(); // borro los descendientes de partida
+    var tabla = $("<table />");
+    for (var i=0; i<filas;i++) {
+        var fila = $("<tr/>");
+        for (var j=0; j<columnas;j++){
+            var celda = $('<td id="celda_'+i+'_'+j+'"  onclick=disparo("celda_'+i+'_'+j+'",'+i+','+j+') > </td>');
+            celda.addClass("vacio");
+            fila.append(celda);
+        }
+        tabla.append(fila);
+    }
+    
+    $("#partida").append(tabla);
 }
     
 /**
@@ -205,8 +223,72 @@ function crearPartida(){
     // rellenar la matriz "a"
     inicializaMatriz('a',tablero);
     colocarBarcos(tablero);
-    generarTablero();
+    generarTablerojQ();
+    
+    // PONEMOS LOS SEGUNDOS AL TIEMPO DE PARTIDA
+    
+    // ARRANCAMOS EL TIMER!!! -> con setInterval()
+    
+    
     // volcar la matriz a consola
     matriz2console(tablero);
 }
+
+function callbackTimer(){
+    // actualizar el tiempo que queda
+    
+    // si el tiempo es <= 0 para el timer clearInterval() y acaba la partida
+    
+}
+
+function disparo(celda,i,j){
+    // alert("Has disparado en la caja: "+celda+ "hay que mirar el tablero en la posición"+i+","+j);
+    
+    switch (tablero[i][j]){
+        case 'a':
+            tablero[i][j]='A';
+            $('#'+celda).removeClass('vacio');
+            $('#'+celda).addClass('agua');
+            break;
+        case 'b':
+            tablero[i][j]='B';
+            $('#'+celda).removeClass('vacio');
+            $('#'+celda).addClass('buque');
+            break;
+        case 'd':
+            tablero[i][j]='D';
+            $('#'+celda).removeClass('vacio');
+            $('#'+celda).addClass('destructor');
+            break;
+        case 'f':
+            tablero[i][j]='F';
+            $('#'+celda).removeClass('vacio');
+            $('#'+celda).addClass('fragata');
+            break;
+        case 'p':
+            tablero[i][j]='P';
+            $('#'+celda).removeClass('vacio');
+            $('#'+celda).addClass('portaaviones');
+            break;
+        case 's':
+            tablero[i][j]='S';
+            $('#'+celda).removeClass('vacio');
+            $('#'+celda).addClass('submarino');
+            break;
+                            
+        default:
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 

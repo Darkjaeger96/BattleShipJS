@@ -1,8 +1,66 @@
 
 .vacio {
-    background-image: url("../img/vacio.jpg");
+    background-image: url("../img/vacio.png");
     background-size: 100% 100%;
     background-repeat:no-repeat;
-    width: 32px;    
-    height: 32px;
+    width: 48px;    
+    height: 48px;
 }
+
+
+.fragata {
+    background-image: url("../img/fragata.png");
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+    width: 48px;    
+    height: 48px;
+}
+
+
+.submarino {
+    background-image: url("../img/submarino.png");
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+    width: 48px;    
+    height: 48px;
+}
+
+
+.buque {
+    background-image: url("../img/buque.png");
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+    width: 48px;    
+    height: 48px;
+}
+
+
+.destructor {
+    background-image: url("../img/destructor.png");
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+    width: 48px;    
+    height: 48px;
+}
+
+
+.portaaviones {
+    background-image: url("../img/portaaviones.png");
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+    width: 48px;    
+    height: 48px;
+}
+
+
+#partida {
+    background-image: url("../img/agua.png");
+    background-repeat:repeat;
+}
+
+.agua {
+    width: 48px;    
+    height: 48px;
+}
+
+
