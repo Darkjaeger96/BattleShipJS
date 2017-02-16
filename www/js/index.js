@@ -10,8 +10,9 @@ var tablero = null;
 var filas = 8;
 var columnas = 8;
 
-var segundos;
-var myTimer;
+var segundos = 0;
+var myTimer = null;
+var disparos = 0;
 
 /**
  * Esta función responde al evento "ready" y carga la 
@@ -19,6 +20,11 @@ var myTimer;
  * cargamos una configuración por defecto.
 */
 $(document).ready(function(){
+    cargaConfiguracion();
+});
+
+
+function cargaConfiguracion(){
     //¿hay localStorage disponible? (almacenamos la conf. ahí)
     if (typeof(Storage) !== "undefined") {
         barcos = JSON.parse(localStorage.getItem("barcos"));
@@ -43,12 +49,23 @@ $(document).ready(function(){
             localStorage.setItem("columnas",8);
         }
         
+        segundos = parseInt(localStorage.getItem("segundos"));
+        if (isNaN(segundos)) {
+            segundos = 30;
+            localStorage.setItem("segundos",30);
+        }
+        
+        disparos = parseInt(localStorage.getItem("disparos"));
+        if (isNaN(disparos)) {
+            disparos = 50;
+            localStorage.setItem("disparos",50);
+        }        
     } else { 
         // NO hay localStorage, no podemos guardar 
         // conf. ni información de las partidas (puntuaciones)
         console.log("No tenemos LocalStorage");
     }
-});
+}
 
 /**
     Esta función crea una matriz (en JS es un 
@@ -195,11 +212,11 @@ function generarTablero(){
     }
     
     html+='</table>';
-    document.getElementById("partida").innerHTML=html;
+    document.getElementById("tablero").innerHTML=html;
 }
 
 function generarTablerojQ(){
-    $("#partida").empty(); // borro los descendientes de partida
+    $("#tablero").empty(); // borro los descendientes de partida
     var tabla = $("<table />");
     for (var i=0; i<filas;i++) {
         var fila = $("<tr/>");
@@ -211,72 +228,85 @@ function generarTablerojQ(){
         tabla.append(fila);
     }
     
-    $("#partida").append(tabla);
+    $("#tablero").append(tabla);
 }
     
 /**
 
 */
 function crearPartida(){
+    // PONEMOS LOS SEGUNDOS AL TIEMPO DE PARTIDA
+    cargaConfiguracion();
+    clearInterval(myTimer);
     // crear una matriz de fil x col
     tablero = crearMatriz(filas,columnas);
     // rellenar la matriz "a"
     inicializaMatriz('a',tablero);
     colocarBarcos(tablero);
     generarTablerojQ();
-    
-    // PONEMOS LOS SEGUNDOS AL TIEMPO DE PARTIDA
-    
     // ARRANCAMOS EL TIMER!!! -> con setInterval()
-    
-    
+    myTimer = setInterval(callbackTimer,1000);
+    // ACTUALIZAMOS LAS CAJAS DEL TIEMPO Y DISPAROS
+    $("#disparos").html(disparos+" misiles");
+    $("#tiempo").html(segundos+" seg.");
     // volcar la matriz a consola
     matriz2console(tablero);
 }
 
 function callbackTimer(){
     // actualizar el tiempo que queda
-    
+    segundos--;
     // si el tiempo es <= 0 para el timer clearInterval() y acaba la partida
-    
+    if(segundos<=0) {
+        clearInterval(myTimer);
+        // FALTA PARAR PARTIDA
+    }
+    $("#tiempo").html(segundos+" seg.");
 }
 
 function disparo(celda,i,j){
     // alert("Has disparado en la caja: "+celda+ "hay que mirar el tablero en la posición"+i+","+j);
-    
-    switch (tablero[i][j]){
-        case 'a':
-            tablero[i][j]='A';
-            $('#'+celda).removeClass('vacio');
-            $('#'+celda).addClass('agua');
-            break;
-        case 'b':
-            tablero[i][j]='B';
-            $('#'+celda).removeClass('vacio');
-            $('#'+celda).addClass('buque');
-            break;
-        case 'd':
-            tablero[i][j]='D';
-            $('#'+celda).removeClass('vacio');
-            $('#'+celda).addClass('destructor');
-            break;
-        case 'f':
-            tablero[i][j]='F';
-            $('#'+celda).removeClass('vacio');
-            $('#'+celda).addClass('fragata');
-            break;
-        case 'p':
-            tablero[i][j]='P';
-            $('#'+celda).removeClass('vacio');
-            $('#'+celda).addClass('portaaviones');
-            break;
-        case 's':
-            tablero[i][j]='S';
-            $('#'+celda).removeClass('vacio');
-            $('#'+celda).addClass('submarino');
-            break;
+    disparos--; 
+    if (disparos>=0 && segundos>0) {
+        switch (tablero[i][j]){
+            case 'a':
+                tablero[i][j]='A';
+                $('#'+celda).removeClass('vacio');
+                $('#'+celda).addClass('agua');
+                break;
+            case 'b':
+                tablero[i][j]='B';
+                $('#'+celda).removeClass('vacio');
+                $('#'+celda).addClass('buque');
+                break;
+            case 'd':
+                tablero[i][j]='D';
+                $('#'+celda).removeClass('vacio');
+                $('#'+celda).addClass('destructor');
+                break;
+            case 'f':
+                tablero[i][j]='F';
+                $('#'+celda).removeClass('vacio');
+                $('#'+celda).addClass('fragata');
+                break;
+            case 'p':
+                tablero[i][j]='P';
+                $('#'+celda).removeClass('vacio');
+                $('#'+celda).addClass('portaaviones');
+                break;
+            case 's':
+                tablero[i][j]='S';
+                $('#'+celda).removeClass('vacio');
+                $('#'+celda).addClass('submarino');
+                break;
                             
-        default:
+            default:
+                disparos++;
+        }
+        $("#disparos").html(disparos+" misiles");
+    } else {
+        // FINALIZAR PARTIDA Y PEDIR INFO PARA LOS MARCADORES (FORMULARIO)
+        console.log("partida terminada.");
     }
 }
 

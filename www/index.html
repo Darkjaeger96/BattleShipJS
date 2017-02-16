@@ -14,7 +14,11 @@
     <link rel="stylesheet" type="text/css" href="lib/appframework/icons.css" />
     <link rel="stylesheet" type="text/css" href="lib/appframework/af.ui.css" />
     <link rel="stylesheet" type="text/css" href="css/styles.css" />
-
+    
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        
+    <script type="text/javascript" charset="utf-8" src="bower_components/bootstrap/dist/js/bootstrap.min.js"> </script>
+        
     <script type="text/javascript" charset="utf-8" src="lib/jquery.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="lib/fastclick.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="lib/appframework/appframework.ui.min.js"></script>
@@ -46,11 +50,30 @@
                 Inicio
                 <img src="img/inicio.png" width="100%">
             </div>
-            <div class="fondo panel" id="partida" data-title="Partida">
-                Partida
+            <div class="panel container" id="partida" data-title="Partida">
+                <div class="row"> <!-- Esta caja para el tiempo y los disparos -->
+                    <div id="disparos" class="col-xs-5 informacion"> 
+                        JS No soportado
+                    </div>
+                    <div id="pausa" class="col-xs-2 informacion">
+                        =
+                    </div>
+                    <div id="tiempo" class="col-xs-5 informacion">
+                        JS No soportado
+                    </div>
+                </div>
+                <div id="tablero"> <!-- Esta caja para el tablero de juego -->
+                
+                </div>
             </div>
             <div class="panel" id="puntuaciones" data-title="Puntuaciones">
                 Mejores puntuaciones
+            </div>
+            <div class="panel" id="formulario" data-title="Tus puntos">
+                Formulario para meter nuestro nombre.
+                (Cuando acabo una partida)
+                Puntos.
+                Tiempo.
             </div>
             <div class="panel" id="creditos" data-title="Créditos">
                 <h3>Créditos y ayuda</h3>
