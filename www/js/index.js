@@ -14,6 +14,9 @@ var segundos = 0;
 var myTimer = null;
 var disparos = 0;
 
+var aciertos = 0;
+
+
 /**
  * Esta función responde al evento "ready" y carga la 
  * configuración inicial de mi APP. Si no hay configuración,
@@ -36,7 +39,8 @@ function cargaConfiguracion(){
                 {tam:3, letra:'s', nombre:'submarino'},
                 {tam:4, letra:'d', nombre:'destructor'},
                 {tam:5, letra:'p', nombre:'portaaviones'},
-            ];            localStorage.setItem("barcos",JSON.stringify(barcos));
+            ];            
+            localStorage.setItem("barcos",JSON.stringify(barcos));
         }
         
         filas = parseInt(localStorage.getItem("filas"));
@@ -235,6 +239,7 @@ function generarTablerojQ(){
 
 */
 function crearPartida(){
+    aciertos = 0;
     // PONEMOS LOS SEGUNDOS AL TIEMPO DE PARTIDA
     cargaConfiguracion();
     clearInterval(myTimer);
@@ -258,16 +263,16 @@ function callbackTimer(){
     segundos--;
     // si el tiempo es <= 0 para el timer clearInterval() y acaba la partida
     if(segundos<=0) {
-        clearInterval(myTimer);
-        // FALTA PARAR PARTIDA
+        terminarPartida(); // <- Ahora paro el interval en terminarPartida()
     }
     $("#tiempo").html(segundos+" seg.");
 }
 
 function disparo(celda,i,j){
     // alert("Has disparado en la caja: "+celda+ "hay que mirar el tablero en la posición"+i+","+j);
-    disparos--; 
-    if (disparos>=0 && segundos>0) {
+    if (disparos>0 && segundos>0) {
+        disparos--;
+        aciertos++;
         switch (tablero[i][j]){
             case 'a':
                 tablero[i][j]='A';
@@ -302,20 +307,71 @@ function disparo(celda,i,j){
                             
             default:
                 disparos++;
+                aciertos--;
         }
         $("#disparos").html(disparos+" misiles");
     } else {
         // FINALIZAR PARTIDA Y PEDIR INFO PARA LOS MARCADORES (FORMULARIO)
         console.log("partida terminada.");
+        terminarPartida();
     }
 }
 
 
+function terminarPartida(){
+    // CALCULAR PUNTOS
+    $("#puntos").val(aciertos*disparos*100+segundos*500);
+    $("#segundos").val(segundos);
+    // PARAR EL TIMER (porque no me queden disparos
+    // o hayamos hundido todos los barcos)
+    clearInterval(myTimer);
+    
+    // Mostrar el diálogo para guardar los puntos
+    $.afui.clearHistory();
+    $.afui.loadContent("#formulario",false,false,"up");
+}
 
+function guargarPuntos(){
+    // Cargamos los marcadores de localStorage
+    var marcadores = JSON.parse(localStorage.getItem("marcadores"));
+    // Si no existe, lo inicializamos.
+    if (marcadores === null) {
+        marcadores = [];        
+    }
+    
+    // Ejemplo de cómo leer de un formulario a JSON
+    var puntuacion = {
+        "nombre": $("#nombre").val(),
+        "puntos": $("#puntos").val(),
+        "tiempo": $("#segundos").val()
+    };
+    // Introducimos la puntuación en el array.
+    marcadores.push(puntuacion);
+    
+    localStorage.setItem("marcadores",JSON.stringify(marcadores));
+}
 
-
-
-
+function mostrarPuntos(){
+    $("#puntuaciones").empty();
+    // Cargamos los marcadores de localStorage
+    var marcadores = JSON.parse(localStorage.getItem("marcadores"));
+    // Si no existe, no hacemos nada.
+    var tabla = $("<table border='1px solid black'/>");
+    tabla.append("<th>nombre</th>","<th>puntos</th>","<th>tiempo</th>");
+    if (marcadores !== null) {
+        for (var jugador in marcadores) {
+            var tr = $("<tr />");
+            tr.append("<td>"+marcadores[jugador].nombre+"</td>");
+            tr.append("<td>"+marcadores[jugador].puntos+"</td>");
+            tr.append("<td>"+marcadores[jugador].tiempo+"</td>");
+            tabla.append(tr);
+        }
+    }
+    $("#puntuaciones").append(tabla);
+    
+    $.afui.clearHistory();
+    $.afui.loadContent("#puntuaciones",false,false,"up");
+}
 
 
 
